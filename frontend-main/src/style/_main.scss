@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+
+:root {
+    --blue: #004A77;
+    --green: #34A853;
+    --yellow: #FBBC05;
+    --red: #EA4335;
+
+    --bg-light: #2E2F2F;
+    --bg: #1E1F20;
+    --bg-dark: #131314;
+
+    --text: #c4c7c5;
+
+    --font: "Google Sans", sans-serif;
+
+    // fonts    
+    --xsm: .75rem;
+    --sm: .9rem;
+    --nm: 1rem;
+    --nm-l: 1.25rem;
+    --lg: 2rem;
+    --xlg: 3rem;
+
+    --side-nav-width: 250px;
+    --top-nav-height: 70px
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font);
+}
+
+body {
+    background: var(--bg);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    margin-left: var(--side-nav-width);
+    inset: 64px 0 0 256px;
+}
+
+.image_card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+
+    img {
+        display: block;
+    }
+
+    .text_content {
+        top: -50%;
+        position: absolute;
+
+        color: mix-blend-mode;
+
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 12px;
+        background: rgba(30, 31, 32, .7);
+        transition: all .3s ease-in-out;
+
+        p {
+            font-size: var(--sm);
+            color: var(--text);
+        }
+
+        svg {
+            color: white;
+            cursor: pointer;
+        }
+    }
+
+    &:hover {
+        .text_content {
+            top: 0;
+        }
+    }
+}
+
+
+
+.tooltip {
+    position: relative !important;
+    cursor: pointer;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg-light);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+
+    font-size: var(--xsm);
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}

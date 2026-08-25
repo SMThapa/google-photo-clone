@@ -1,0 +1,33 @@
+apiVersion: autoscaling.k8s.io/v1 # VPA API group - different from normal k8s autoscaling/v2
+kind: VerticalPodAutoscaler # Resource type - tells k8s this is a VPA object
+metadata:
+  name: my-app-vpa # Name of this VPA object
+spec:
+  targetRef: # Which workload this VPA should manage
+    apiVersion: "apps/v1" # API version of the target workload
+    kind: Deployment # Type of workload - can be Deployment, StatefulSet, DaemonSet
+    name: my-app # Name of your Deployment (must match exactly)
+  updatePolicy:
+    updateMode:
+      "Auto" # How VPA applies recommendations:
+      #   "Off"      → only shows recommendations, changes nothing
+      #   "Initial"  → sets resources only when pod is first created
+      #   "Recreate" → evicts & recreates pods to apply new resources
+      #   "Auto"     → same as Recreate today, may do in-place in future
+  resourcePolicy:
+    containerPolicies: # Rules per container inside the pod
+      - containerName:
+          "*" # "*" applies to ALL containers in the pod
+          # or use specific name like "nginx" to target one container
+        minAllowed: # VPA will NEVER recommend below these values
+          cpu: 100m # minimum 100 millicores (0.1 CPU)
+          memory: 50Mi # minimum 50 Mebibytes of memory
+        maxAllowed: # VPA will NEVER recommend above these values
+          cpu: 2 # maximum 2 full CPU cores
+          memory:
+            2Gi # maximum 2 Gibibytes of memory
+            # Important: set this based on your node size!
+        controlledResources:
+          [“cpu”, “memory”] # Which resources VPA is allowed to tune                      							# VPA will adjust CPU requests/limits
+          # VPA will adjust memory requests/limits
+          # Remove one if you want VPA to manage only the other

@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: siddharth
+
+resources:
+  - namespace.yaml
+  - limitrange.yaml
+  - database/statefulset.yaml
+  - database/service.yaml
+  - database/vpa.yaml
+
+  - backend/deployment.yaml
+  - backend/service.yaml
+  - backend/hpa.yaml
+
+  - frontend/deployment.yaml
+  - frontend/service.yaml
+  - frontend/hpa.yaml
+
+  - gateway.yaml

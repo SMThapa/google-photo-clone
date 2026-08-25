@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend-deployment
+  name: frontend-deployment
+  namespace: siddharth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: frontend-deployment
+    spec:
+      containers:
+        - image: sidilian09/google-photo-frontend:latest
+          name: myapp-frontend
+          ports:
+            - containerPort: 80
+          resources: {}

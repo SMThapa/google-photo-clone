@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup
+  namespace: siddharth
+spec:
+  schedule: "0 2 * * *" # every day at 2am
+  # schedule: "*/5 * * * *" # every day at 2am
+
+  successfulJobsHistoryLimit: 3 # keep last 3 successful job(pod)
+  failedJobsHistoryLimit: 1 # keep last failed job(pod)
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: mongo-backup-sa
+          containers:
+            - name: mongodb-backup
+              image: sidilian09/mongodb-backup:v1
+              env:
+                - name: MONGO_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: myapp-secrets
+                      key: MONGO_URI
+                - name: S3_BUCKET
+                  value: sidilian-google-photo-mongo-backup

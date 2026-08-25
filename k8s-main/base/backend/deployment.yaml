@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend-deployment
+  name: backend-deployment
+  namespace: siddharth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: backend-deployment
+    spec:
+      containers:
+        - image: sidilian09/google-photo-backend:latest
+          name: myapp-backend
+          ports:
+            - containerPort: 5000
+          resources: {}
+          env:
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  key: AWS_REGION
+                  name: myapp-config
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: S3_BUCKET_NAME
+                  name: myapp-config
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  key: MONGO_URI
+                  name: myapp-secrets
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: aws_access_key_id
+                  name: myapp-secrets
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: aws_secret_access_key
+                  name: myapp-secrets

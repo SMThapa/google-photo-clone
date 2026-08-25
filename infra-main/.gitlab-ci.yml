@@ -1,0 +1,15 @@
+stages:
+  - infra
+
+build_infra:
+  stage: infra
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - terraform init
+    - terraform validate
+    - terraform plan
+    - terraform apply -auto-approve

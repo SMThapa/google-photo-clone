@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-memory-limitrange
+spec:
+  limits:
+    - type: Container
+      # default limit
+      default:
+        cpu: "500m"
+        memory: "512Mi"
+      # default request
+      defaultRequest:
+        cpu: "200m"
+        memory: "256Mi"
+      # max resource a pod can request for
+      max:
+        cpu: "1"
+        memory: "1Gi"
+      # min resource a pod can request for
+      min:
+        cpu: "100m"
+        memory: "128Mi"
+    - type: PersistentVolumeClaim
+      max:
+        storage: "5Gi"
+      min:
+        storage: "1Gi"

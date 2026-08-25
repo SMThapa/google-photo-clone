@@ -1,0 +1,355 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+  name: ebs-gp3
+parameters:
+  type: gp3
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::265751833978:role/mongo-backup-role
+  name: mongo-backup-sa
+  namespace: siddharth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: backend-service
+  name: backend-service
+  namespace: siddharth
+spec:
+  ports:
+  - name: 5000-5000
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: backend-deployment
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend-service
+  name: frontend-service
+  namespace: siddharth
+spec:
+  ports:
+  - name: 8080-80
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: frontend-deployment
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo-service
+  name: mongo-service
+  namespace: siddharth
+spec:
+  clusterIP: None
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    app: mongodb
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-memory-limitrange
+  namespace: siddharth
+spec:
+  limits:
+  - default:
+      cpu: 500m
+      memory: 512Mi
+    defaultRequest:
+      cpu: 200m
+      memory: 256Mi
+    max:
+      cpu: "1"
+      memory: 1Gi
+    min:
+      cpu: 100m
+      memory: 128Mi
+    type: Container
+  - max:
+      storage: 5Gi
+    min:
+      storage: 1Gi
+    type: PersistentVolumeClaim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend-deployment
+  name: backend-deployment
+  namespace: siddharth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: backend-deployment
+    spec:
+      containers:
+      - env:
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: AWS_REGION
+              name: myapp-config
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: S3_BUCKET_NAME
+              name: myapp-config
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_URI
+              name: myapp-secrets
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: aws_access_key_id
+              name: myapp-secrets
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_secret_access_key
+              name: myapp-secrets
+        image: sidilian09/google-photo-backend:latest
+        name: myapp-backend
+        ports:
+        - containerPort: 5000
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend-deployment
+  name: frontend-deployment
+  namespace: siddharth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: frontend-deployment
+    spec:
+      containers:
+      - image: sidilian09/google-photo-frontend:latest
+        name: myapp-frontend
+        ports:
+        - containerPort: 80
+        resources: {}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mongodb
+  name: mongodb
+  namespace: siddharth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  serviceName: mongo-service
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: mongo-root-username
+              name: myapp-secrets
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mongo-root-password
+              name: myapp-secrets
+        image: mongo:8.3.2-noble
+        imagePullPolicy: IfNotPresent
+        name: mongo
+        readinessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb-storage
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-storage
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: ebs-gp3
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup
+  namespace: siddharth
+spec:
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  key: MONGO_URI
+                  name: myapp-secrets
+            - name: S3_BUCKET
+              value: sidilian-google-photo-mongo-backup
+            image: sidilian09/mongodb-backup:v1
+            name: mongodb-backup
+          restartPolicy: OnFailure
+          serviceAccountName: mongo-backup-sa
+  schedule: 0 2 * * *
+  successfulJobsHistoryLimit: 3
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-hpa
+  namespace: siddharth
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-deployment
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-hpa
+  namespace: siddharth
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend-deployment
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: app-gateway
+  namespace: siddharth
+spec:
+  gatewayClassName: envoy
+  listeners:
+  - allowedRoutes:
+      namespaces:
+        from: Same
+    name: http
+    port: 80
+    protocol: HTTP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: envoy
+  namespace: siddharth
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: app-route
+  namespace: siddharth
+spec:
+  parentRefs:
+  - name: app-gateway
+    namespace: siddharth
+  rules:
+  - backendRefs:
+    - name: backend-service
+      port: 5000
+    matches:
+    - path:
+        type: PathPrefix
+        value: /api
+  - backendRefs:
+    - name: frontend-service
+      port: 8080
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
