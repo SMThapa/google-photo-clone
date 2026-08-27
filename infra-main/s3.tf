@@ -1,5 +1,5 @@
 data "aws_s3_bucket" "mongo_backup" {
-  bucket = "sidilian-google-photo-mongo-backup"
+  bucket = "sidilian-google-photo-mongo-backup-v1"
 }
 
 resource "aws_iam_role" "mongo_backup_role" {
