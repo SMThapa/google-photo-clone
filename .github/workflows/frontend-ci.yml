@@ -27,17 +27,17 @@ jobs:
         with:
           projectBaseDir: frontend-main
 
-      - name: Debug - list scannerwork folder
-        run: ls -la frontend-main/.scannerwork/ || echo "folder not found"
+      # - name: Debug - list scannerwork folder
+      #   run: ls -la frontend-main/.scannerwork/ || echo "folder not found"
 
-      # - name: SonarQube Quality Gate check
-      #   uses: SonarSource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   with:
-      #     projectBaseDir: frontend-main/.scannerwork/report-task.txt
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: http://3.86.198.228:9000
+      - name: SonarQube Quality Gate check
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        with:
+          scanMetadataReportFile: frontend-main/.scannerwork/report-task.txt
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://3.86.198.228:9000
           
 
   build:
