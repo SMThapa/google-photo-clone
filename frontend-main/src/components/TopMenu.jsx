@@ -17,20 +17,37 @@ export const TopMenu = () => {
 
         const total = files.length;
 
-        const toastId = toast.loading(
-            `Uploading ${total} image(s) ...`
-        );
+        const toastId = toast.loading(`Uploading ${total} image(s) ...`);
 
-        await axios.post("/api/media/upload", formData);
+        try {
+            await axios.post("/api/media/upload", formData);
 
-        window.location.reload();
+            toast.update(toastId, {
+                render: `Image(s) uploaded complete.`,
+                type: "success",
+                isLoading: false,
+                autoClose: 3000
+            });
 
-        toast.update(toastId, {
-            render: `Image(s) uploaded complete.`,
-            type: "success",
-            isLoading: false,
-            autoClose: 3000
-        });
+            // give the toast a moment to show before reloading
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (error) {
+            console.error("Upload failed:", error);
+
+            const message =
+                error.response?.data?.message ||
+                error.message ||
+                "Upload failed. Please try again.";
+
+            toast.update(toastId, {
+                render: message,
+                type: "error",
+                isLoading: false,
+                autoClose: 5000
+            });
+        }
     };
 
     return (
