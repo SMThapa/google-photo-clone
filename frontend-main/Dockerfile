@@ -16,6 +16,9 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
+# Patch known OS vulnerabilities in the base image
+RUN apk update && apk upgrade --no-cache
+
 # Copy built files
 COPY --from=builder /app/dist /usr/share/nginx/html
 
