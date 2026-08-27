@@ -27,9 +27,11 @@ jobs:
           cache-dependency-path: frontend-main/package-lock.json
 
       - name: Install dependencies
+        working-directory: frontend-main
         run: npm ci
 
       - name: Build app
+        working-directory: frontend-main
         run: npm run build
 
       - name: Upload build artifact
