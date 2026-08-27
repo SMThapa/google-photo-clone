@@ -5,11 +5,11 @@ on:
     branches: 
       - master
     paths: 
-      - 'frontend-main/**'
+      - 'backend-main/**'
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: frontend-main
+  IMAGE_NAME: backend-main
 
 jobs:
 
