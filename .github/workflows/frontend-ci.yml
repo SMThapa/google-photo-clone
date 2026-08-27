@@ -1,4 +1,4 @@
-name: CI
+name: Frontend - Scan, Build Image & Upload
 
 on:
   push:
