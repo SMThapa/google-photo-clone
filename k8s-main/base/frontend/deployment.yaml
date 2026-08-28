@@ -17,7 +17,7 @@ spec:
         app: frontend-deployment
     spec:
       containers:
-        - image: sidilian09/frontend-main:latest
+        - image: sidilian09/google-photo-frontend:latest
           name: myapp-frontend
           ports:
             - containerPort: 80

@@ -69,11 +69,11 @@ module "eks" {
   eks_managed_node_groups = {
     worker_node = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["m5.xlarge"]
+      instance_types = ["m7i-flex.large"]
 
-      min_size     = 1
+      min_size     = 2
       max_size     = 4
-      desired_size = 1
+      desired_size = 2
 
       # allows EBS CSI driver to make AWS API calls
       iam_role_additional_policies = {
