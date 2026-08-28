@@ -3,7 +3,7 @@ name: Terraform AWS Infra
 
 on:
   push:
-    branches: [main]
+    branches: master
     paths:
       - 'infra-main/**'
 
@@ -78,6 +78,7 @@ jobs:
     name: Terraform Plan
     runs-on: ubuntu-latest
     needs: [fmt-validate, security-scan]
+    if: github.event_name == 'push'
     defaults:
       run:
         working-directory: ${{ env.TF_WORKING_DIR }}
@@ -119,7 +120,7 @@ jobs:
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: plan
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply'
     defaults:
       run:
         working-directory: ${{ env.TF_WORKING_DIR }}
