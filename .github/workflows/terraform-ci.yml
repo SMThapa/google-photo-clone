@@ -26,7 +26,7 @@ permissions:
 env:
   TF_VERSION: "1.9.5"
   AWS_REGION: "us-east-1"          # change to your region
-  TF_WORKING_DIR: "."       # change if your root module lives elsewhere
+  TF_WORKING_DIR: "infra-main/"       # change if your root module lives elsewhere
 
 jobs:
   fmt-validate:
