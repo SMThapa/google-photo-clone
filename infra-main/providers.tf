@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket  = "sidilian-s3-terraform-statefile"
+    bucket  = "sidilian-s3-terraform-statefile-all"
     key     = "google-photo-clone/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
