@@ -100,7 +100,9 @@ jobs:
 
       - name: Terraform Plan
         id: plan
+        shell: bash
         run: |
+          set -o pipefail
           terraform plan -no-color -out=tfplan | tee plan_output.txt
         continue-on-error: true
 
@@ -114,6 +116,7 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}/tfplan
           retention-days: 5
+          if-no-files-found: error  
 
   apply:
     name: Terraform Apply
