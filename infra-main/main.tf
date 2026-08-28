@@ -62,7 +62,7 @@ module "eks" {
 
   #This allows you to use IAM Roles for Service Accounts (IRSA), granting specific AWS IAM permissions directly to your Kubernetes pods.
   # enable_irsa = true
-  
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
