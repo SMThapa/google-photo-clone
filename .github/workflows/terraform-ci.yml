@@ -23,8 +23,8 @@ permissions:
   contents: read
   security-events: write
 
-env:
-  TF_VERSION: "1.9.5"
+env:  
+  TF_VERSION: "1.10.5"   # or later; use_lockfile requires >=1.10
   AWS_REGION: "us-east-1"          # change to your region
   TF_WORKING_DIR: "infra-main/"       # change if your root module lives elsewhere
 
