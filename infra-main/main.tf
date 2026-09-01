@@ -78,6 +78,9 @@ module "eks" {
       # allows EBS CSI driver to make AWS API calls
       iam_role_additional_policies = {
         AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+
+        #ssm (aws systems manager)
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       }
 
     }

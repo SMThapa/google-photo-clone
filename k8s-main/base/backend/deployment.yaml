@@ -17,8 +17,8 @@ spec:
         app: backend-deployment
     spec:
       containers:
-        - image: sidilian09/google-photo-backend:latest
-        # - image: sidilian09/backend-main:latest
+        # - image: sidilian09/google-photo-backend:latest
+        - image: sidilian09/backend-main:latest
           name: myapp-backend
           ports:
             - containerPort: 5000

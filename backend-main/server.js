@@ -19,7 +19,7 @@ app.use(express.json());
 app.use((req, res, next) => {
     const end = httpRequestDuration.startTimer();
     res.on('finish', () => {
-        const route = req.route ? req.route.path : req.path;
+        const route = req.route ? req.baseUrl + req.route.path : 'unmatched';
         end({ method: req.method, route, status_code: res.statusCode });
         httpRequestCounter.inc({ method: req.method, route, status_code: res.statusCode });
     });
