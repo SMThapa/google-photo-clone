@@ -26,7 +26,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: http://3.86.198.228:9000/
+          SONAR_HOST_URL: http://13.218.166.236:9000/
         with:
           projectBaseDir: ${{ env.IMAGE_NAME }}
 
@@ -40,7 +40,7 @@ jobs:
           scanMetadataReportFile: ${{ env.IMAGE_NAME }}/.scannerwork/report-task.txt
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: http://3.86.198.228:9000
+          SONAR_HOST_URL: http://13.218.166.236:9000
           
 
   docker:
