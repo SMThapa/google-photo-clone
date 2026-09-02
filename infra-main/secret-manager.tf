@@ -1,7 +1,7 @@
 # --- IAM Policy ---
 resource "aws_iam_policy" "mongodb_secrets_access" {
   name        = "mongodb-secrets-access"
-  description = "Allows reading the mongodb-creds secret from Secrets Manager"
+  description = "Allows reading the google-photo-secrets secret from Secrets Manager"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -14,7 +14,7 @@ resource "aws_iam_policy" "mongodb_secrets_access" {
           "secretsmanager:DescribeSecret"
         ]
         # wildcard suffix since Secrets Manager appends a random 6-char suffix to the ARN
-        Resource = "arn:aws:secretsmanager:us-east-1:359013545510:secret:mongodb-creds*"
+        Resource = "arn:aws:secretsmanager:us-east-1:359013545510:secret:google-photo-secrets*"
       }
     ]
   })

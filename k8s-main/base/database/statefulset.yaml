@@ -16,6 +16,7 @@ spec:
       labels:
         app: mongodb
     spec:
+      serviceAccountName: mongodb-secrets-sa 
       containers:
         - image: mongo:7.0
           name: mongo
@@ -38,6 +39,10 @@ spec:
           volumeMounts:
             - name: mongodb-storage #must match with volume-template-name
               mountPath: /data/db
+            - name: secrets-store-inline   # triggers the CSI sync
+              mountPath: /mnt/secrets-store
+              readOnly: true
+
           readinessProbe:
             exec:
               command:
@@ -48,7 +53,13 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
-
+      volumes:
+          - name: secrets-store-inline
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "aws-secrets"
   # works as a pvc but create it for each pod
   volumeClaimTemplates:
     - metadata:
