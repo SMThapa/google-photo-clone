@@ -6,6 +6,7 @@ resources:
   - cronJob.yaml
   - serviceAccount.yaml
   - EBSstorageClass.yaml
+  - secretProvider.yaml
 
 namespace: siddharth
 
