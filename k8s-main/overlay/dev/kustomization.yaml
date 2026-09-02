@@ -4,6 +4,5 @@ kind: Kustomization
 namespace: siddharth
 
 resources:  
-  - configmap.yaml
   - secrets.yaml
   - ../../base
