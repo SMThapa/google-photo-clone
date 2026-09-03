@@ -16,6 +16,7 @@ spec:
       labels:
         app: backend-deployment
     spec:
+      serviceAccountName: mongodb-secrets-sa 
       containers:
         # - image: sidilian09/google-photo-backend:latest
         - image: sidilian09/backend-main:latest
@@ -38,14 +39,25 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: MONGO_URI
-                  name: myapp-secrets
+                  name: google-photo-secrets
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   key: aws_access_key_id
-                  name: myapp-secrets
+                  name: google-photo-secrets
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   key: aws_secret_access_key
-                  name: myapp-secrets
+                  name: google-photo-secrets
+          volumeMounts:
+            - name: secrets-store-inline   # triggers the CSI sync
+              mountPath: /mnt/secrets-store
+              readOnly: true
+      volumes:
+          - name: secrets-store-inline
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "aws-secrets"
