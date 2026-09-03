@@ -50,7 +50,7 @@ resource "aws_iam_role_policy_attachment" "mongodb_secrets_attach" {
 # --- Pod Identity Association: links the role to a specific K8s ServiceAccount ---
 resource "aws_eks_pod_identity_association" "mongodb_secrets" {
   cluster_name    = module.eks.cluster_name
-  namespace       = "kube-system"
+  namespace       = "siddharth"
   service_account = "mongodb-secrets-sa"
   role_arn        = aws_iam_role.mongodb_secrets_role.arn
 }
