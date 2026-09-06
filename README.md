@@ -20,7 +20,7 @@ This is a Google Photos–style app: users log in, upload images (stored in S3, 
 | **Delivery:**| 	GitHub Actions → Docker Hub → FluxCD → ArgoCD |
 | **Networking:**| 	Envoy Gateway (Kubernetes Gateway API)|
 |**Secrets:**| 	AWS Secrets Manager + Secrets Store CSI Driver + EKS Pod Identity|
-|**Observability:**| 	Prometheus, VPA (recommendation + auto modes)|
+|**Observability:**| 	Prometheus, Grafana|
 ## Repo layout
 
 ```bash
