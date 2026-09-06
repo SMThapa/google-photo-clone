@@ -55,12 +55,5 @@ Cluster bootstrapping (Flux + the platform-level Helm releases: ArgoCD, Envoy Ga
 - Any drift between the cluster and the manifests in this repo is corrected automatically; deleted resources are pruned
 
 Net effect: **Flux owns the platform, ArgoCD owns the app** — a push to master in either this repo or the fluxCD repo eventually reflects in the running cluster with no manual kubectl apply.
-## Running locally
 
-See the sub-repo READMEs for full instructions:
-
-- Backend: ./backend-main
-- Frontend: https://github.com/SMThapa/google-photo-clone/tree/master/frontend-main
-- Infra: https://github.com/SMThapa/google-photo-clone/tree/master/infra-main
-- k8s: https://github.com/SMThapa/google-photo-clone/tree/master/k8s-main
 
