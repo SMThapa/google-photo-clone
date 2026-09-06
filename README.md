@@ -38,7 +38,7 @@ Cluster bootstrapping (Flux + the platform-level Helm releases: ArgoCD, Envoy Ga
 - SonarQube static analysis + quality gate
 - Docker image build (Buildx, layer caching via GHA cache)
 - Trivy image scan — fails the pipeline on CRITICAL/HIGH CVEs
-- Image pushed to Docker Hub as :latest and :<short-sha> — only after the scan passes
+- Image pushed to Docker Hub as :latest and : < short-sha > — only after the scan passes
 
 **Infra CI (terraform-ci.yml)**
 - terraform fmt -check + terraform validate
