@@ -59,7 +59,7 @@ Net effect: **Flux owns the platform, ArgoCD owns the app** — a push to master
 
 See the sub-repo READMEs for full instructions:
 
-- Backend: https://github.com/SMThapa/google-photo-clone/tree/master/backend-main
+- Backend: ./backend-main
 - Frontend: https://github.com/SMThapa/google-photo-clone/tree/master/frontend-main
 - Infra: https://github.com/SMThapa/google-photo-clone/tree/master/infra-main
 - k8s: https://github.com/SMThapa/google-photo-clone/tree/master/k8s-main
