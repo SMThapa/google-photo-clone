@@ -23,7 +23,7 @@ spec:
                 - name: MONGO_URI
                   valueFrom:
                     secretKeyRef:
-                      name: myapp-secrets
+                      name: google-photo-secrets
                       key: MONGO_URI
                 - name: S3_BUCKET
                   value: sidilian-google-photo-mongo-backup

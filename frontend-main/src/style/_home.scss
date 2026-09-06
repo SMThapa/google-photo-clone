@@ -8,6 +8,8 @@
     border-radius: 10px;
     min-height: calc(100dvh - var(--top-nav-height));
 
+    margin: 0 10px 0 0;
+
     @media (min-width: 1200px) {
         column-count: 6 !important;
     }

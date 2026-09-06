@@ -6,3 +6,28 @@ namespace: siddharth
 resources:  
   - secrets.yaml
   - ../../base
+
+patches:
+  # Strip AWS-specific fields from the backend Deployment
+  - target:
+      kind: Deployment
+      name: backend-deployment
+    patch: |
+      - op: remove
+        path: /spec/template/spec/serviceAccountName
+      - op: remove
+        path: /spec/template/spec/containers/0/volumeMounts
+      - op: remove
+        path: /spec/template/spec/volumes
+
+  # Strip serviceAccountName from the StatefulSet too, and use default storage
+  - target:
+      kind: StatefulSet
+      name: mongodb
+    patch: |
+      - op: remove
+        path: /spec/template/spec/serviceAccountName
+      - op: remove
+        path: /spec/template/spec/containers/0/volumeMounts/1
+      - op: remove
+        path: /spec/template/spec/volumes
