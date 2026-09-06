@@ -1,16 +1,37 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# frontend-main
 
-Currently, two official plugins are available:
+React SPA for the photo library UI — login, upload, browse, delete.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# Stack
 
-## React Compiler
+React 19, Vite, axios, react-router-dom, react-toastify, Sass. Served in production via Nginx.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# API calls
 
-## Expanding the ESLint configuration
+All requests go to relative paths (/api/auth/..., /api/media/...) — there's no configurable API base URL. In-cluster, Envoy Gateway routes /api to the backend service and / to this app, so both are served from the same origin and no CORS/base-URL config is needed. Running the frontend against a backend on a different origin (e.g. plain local dev without the gateway) needs a Vite dev proxy or a temporary change to the axios calls in src/api/.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Local development
+
+```bash
+npm install
+npm run dev    
+```
+    
+## Docker
+
+Multi-stage build: node:22-alpine to build with Vite, then the static dist/ output served by nginx:alpine. Nginx is configured for client-side routing (try_files ... /index.html, see nginx.conf) so React Router routes resolve correctly on refresh. Runs on port 80.
+
+```bash
+docker build -t frontend-main .
+docker run -p 8080:80 frontend-main:v1
+```
+
+## CI
+
+.github/workflows/frontend-ci.yml (triggers on changes under frontend-main/): SonarQube scan + quality gate → Docker build → Trivy image scan (fails on CRITICAL/HIGH) → push to Docker Hub. See the root README's Delivery lifecycle for the full picture.
+
+
+
+
