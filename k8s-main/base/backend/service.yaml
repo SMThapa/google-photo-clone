@@ -6,7 +6,7 @@ metadata:
   name: backend-service
 spec:
   ports:
-    - name: 5000-5000
+    - name: http
       port: 5000
       protocol: TCP
       targetPort: 5000

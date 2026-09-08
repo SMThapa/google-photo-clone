@@ -9,7 +9,6 @@ Node 22, Express 5, Mongoose, bcryptjs, jsonwebtoken, multer, @aws-sdk/client-s3
 
 | Method | Route              | Description                          |
 |--------|--------------------|--------------------------------------|
-| POST   | `/api/login`       | Authenticate, returns a JWT          |
 | POST   | `/api/media/upload`| Multipart upload, up to 50 images per request |
 | GET    | `/api/media`       | List all media                       |
 | GET    | `/api/media/:id`   | Get a single media item              |
